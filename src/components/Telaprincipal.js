@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, Button, ImageBackground, StyleSheet, TextInput, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import TelaPadraoWidgetPreview from './TelaPadraoWidgetPreview'; //Pra pt 2 do front
 
 const styles = StyleSheet.create({
     container: {
@@ -76,63 +75,93 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         marginLeft: 35,
+    },
+    buttonTextBlue: {
+        textAlign: 'center',
+        marginLeft: 35,
+        color: 'blue',
     }
 });
 
-const Icon = ({ label, backgroundColor, action }) => {
+const Icon = ({ label, backgroundColor, action, imageName }) => {
     return (
         <TouchableOpacity style={[styles.icon, { backgroundColor }]} onPress={action}>
-            <Image source={{ uri: '/icons/${label}.png' }} />
+            <Image 
+                source={imageName} 
+                style={{ width: 59, height: 57, position: 'absolute', top: 9, left: 16 }} 
+            />
             <Text style={styles.iconLabel}>{label}</Text>
         </TouchableOpacity>
     );
 };
+
 
 const TelaPrincipal = () => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState("");
     const [filteredIcons, setFilteredIcons] = useState([]); // Estado para armazenar os ícones filtrados com base na busca
 
+
     const userSpecificIcons = [
         {
             label: "Beneficios",
+            name: "Beneficios",
             backgroundColor: "#14b8b8", // Cor de fundo do ícone Beneficios
+            imageName: require('../../assets/Beneficios.png'),
         },
         {
             label: "Holerite",
+            name: "Holerite",
             backgroundColor: "green", // Cor de fundo do ícone Holerite
+            imageName: require('../../assets/Holerite.png'),
         },
         {
             label: "Frota",
-            backgroundColor: "#92a8d1", // Cor de fundo do ícone Holerite
+            name: "Frota",
+            backgroundColor: "#92a8d1", // Cor de fundo do ícone Frota
+            imageName: require('../../assets/Frota.png'),
         },
         {
             label: "Parcerias",
-            backgroundColor: "#eead2d", // Cor de fundo do ícone Holerite
+            name: "Parcerias",
+            backgroundColor: "#eead2d", // Cor de fundo do ícone Parcerias
+            imageName: require('../../assets/Parceria.png'),
         },
         {
             label: "Chevrolet",
-            backgroundColor: "#000000", // Cor de fundo do ícone Beneficios
+            name: "Chevrolet",
+            backgroundColor: "#FF0000", // Cor de fundo do ícone Chevrolet
+            imageName: require('../../assets/Chevrolet.png'),
         },
         {
             label: "Restaurante",
-            backgroundColor: "#6e71ff", // Cor de fundo do ícone Holerite
+            name: "Restaurante",
+            backgroundColor: "#CA7004", // Cor de fundo do ícone Restaurante
+            imageName: require('../../assets/Restaurante.png'),
         },
         {
             label: "Unimed",
-            backgroundColor: "#7e9594", // Cor de fundo do ícone Holerite
+            name: "Unimed",
+            backgroundColor: "#0DC694", // Cor de fundo do ícone Unimed
+            imageName: require('../../assets/Unimed.png'),
         },
         {
             label: "Seguro de Vida",
-            backgroundColor: "#6b8e23", // Cor de fundo do ícone Holerite
+            name: "SeguroDeVida",
+            backgroundColor: "#0B5864", // Cor de fundo do ícone Seguro de Vida
+            imageName: require('../../assets/SeguroDeVida.png'),
         },
         {
             label: "Cartão Farmácia",
-            backgroundColor: "#ff0035", // Cor de fundo do ícone Holerite
+            name: "CartaoFarmacia",
+            backgroundColor: "#AF2147", // Cor de fundo do ícone Holerite
+            imageName: require('../../assets/CartaoFarmacia.png'),
         },
         {
             label: "Whatsapp RH",
-            backgroundColor: "#19e619", // Cor de fundo do ícone Holerite
+            name: "Whatsapp",
+            backgroundColor: "#56D304", // Cor de fundo do ícone Holerite
+            imageName: require('../../assets/Whatsapp.png'),
         },     
     ];
 
@@ -144,15 +173,32 @@ const TelaPrincipal = () => {
         setFilteredIcons(filtered);
     }, [searchText]);
 
-    const handleAction = (label) => {
-        console.log("Ação para", label);
-        // Navegar para a tela de widget preview - PT2
-        navigation.navigate("TelaPadraoWidgetPreview", { widgetLabel: label });
+    const navigationMap = {
+        "Beneficios": "Beneficios",
+        "Cartão Farmácia" : "CartaoFarmacia",
+        "Chevrolet" : "Chevrolet",
+        "Frota" : "Frota",
+        "Holerite" : "Holerite",
+        "Parcerias" : "Parcerias",
+        "Restaurante" : "Restaurante",
+        "Seguro de Vida" : "SeguroDeVida",
+        "Unimed" : "Unimed",
+        "Whatsapp RH" : "Whatsapp",
     };
+    
+    const handleAction = (name) => {
+        console.log("Ação para", name);
+        const destination = navigationMap[name];
+        if (destination) {
+            navigation.navigate(destination);
+        }
+    };
+    
 
     const handleLogout = () => {
         navigation.navigate("Login");
     };
+
 
     return (
         <ImageBackground source={require("../../assets/principalbackground.jpg")} style={styles.container}>
@@ -176,20 +222,21 @@ const TelaPrincipal = () => {
                         label={icon.label}
                         backgroundColor={icon.backgroundColor}
                         action={() => handleAction(icon.label)}
+                        imageName={icon.imageName}  // Adicione esta linha
                     />
                 ))}
             </ScrollView>
             <View style={styles.footer}>
                 <View style={styles.button}>
-                    <TouchableOpacity onPress={() => navigation.navigate("PrincipalScreen")}>
+                    <TouchableOpacity onPress={() => navigation.navigate("TelaPrincipal")}>
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Image source={require("../../assets/principal-icon.png")} style={{ width: 30, height: 30, marginLeft: 35 }} />
+                            <Image source={require("../../assets/principal-icon.png")} style={{ width: 30, height: 30, marginLeft: 35, borderColor: 'blue', borderWidth: 1, borderRadius: 15}} />
                         </View>
-                        <Text style={styles.buttonText}>Principal</Text>
+                        <Text style={styles.buttonTextBlue}>Principal</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.button}>
-                    <TouchableOpacity onPress={() => navigation.navigate("IndicadoresScreen")}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Indicadores")}>
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                             <Image source={require("../../assets/indicadores-icon.png")} style={{ width: 30, height: 30, marginLeft: 35 }} />
                         </View>
@@ -198,7 +245,7 @@ const TelaPrincipal = () => {
                 </View>
 
                 <View style={styles.button}>
-                    <TouchableOpacity onPress={() => navigation.navigate("ConfiguracoesScreen")}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Configurações")}>
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                             <Image source={require("../../assets/configuracoes-icon.png")} style={{ width: 30, height: 30, marginLeft: 35 }} />
                         </View>

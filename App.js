@@ -1,11 +1,14 @@
+// App.js
 import React from 'react';
-import { View } from 'react-native';
-import Login from './src/components/Login';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './AppNavigator'; // Import your AppNavigator
 
-export default function App() {
+function App() {
   return (
-    <View style={{ flex: 1 }}>
-      <Login />
-    </View>
+    <NavigationContainer>
+      <AppNavigator /> 
+    </NavigationContainer>
   );
 }
+
+export default App;

@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { ImageBackground, View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import Telaprincipal from './Telaprincipal';
-import { createStackNavigator } from '@react-navigation/stack';
-
-const Stack = createStackNavigator();
+import { ImageBackground, View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import authService from '../../server/authService';
 
 const Login = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  //AQUI VEM A LÓGICA DA API DO BACK PARA LOGAR, IMPLEMENTAREMOS MAIS PRA FRENTE
-  const handleLogin = () => {
-    if (username && password) {
-      navigation.navigate('Telaprincipal');
-    }
-  };
+  const handleLogin = async () => {
+    try {
+      // Simule o processo de autenticação, pois não há campos de entrada
+      const response = await authService.login('usuariodeexemplo', 'senhadeexemplo');
 
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
+      if (response.success) {
+        // Autenticação bem-sucedida, você pode continuar com o código de navegação ou outra lógica
+        navigation.navigate('TelaPrincipal');
+      } else {
+        // Tratar erro de autenticação
+        console.error('Erro de login:', response.error);
+      }
+    } catch (error) {
+      // Trate erros de rede ou outros erros inesperados
+      console.error('Erro de login:', error);
+    }
   };
 
   return (
@@ -28,53 +28,23 @@ const Login = ({ navigation }) => {
           <Text style={[styles.text, { color: 'red' }]}>• Aptiv</Text>
           <Text style={[styles.text, { color: 'black' }]}>Ops •</Text>
         </View>
-        <TextInput
-          style={[styles.input, { color: 'black', marginBottom: 10 }]}
-          placeholder="Nome de usuário"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-        />
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.passwordInput, { color: 'black' }]}
-            placeholder="Senha"
-            secureTextEntry={!isPasswordVisible}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
-          <TouchableOpacity
-            style={styles.eyeIconContainer}
-            onPress={togglePasswordVisibility}
-          >
-            <Image
-              source={isPasswordVisible ? require('../../assets/visivel.png') : require('../../assets/escondido.png')}
-              style={styles.eyeIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={[styles.button, { marginTop: 10 }]} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
+        <Image source={require('../../assets/Aptiv.png')} style={styles.logoAptiv} />
       </View>
     </ImageBackground>
   );
 };
 
-const App = () => {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Telaprincipal" component={Telaprincipal} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  };
-  
-
 const styles = StyleSheet.create({
   background: {
     flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
     resizeMode: 'cover',
     justifyContent: 'center',
   },
@@ -83,7 +53,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
-    paddingTop: 280,
   },
   header: {
     flexDirection: 'row',
@@ -96,54 +65,25 @@ const styles = StyleSheet.create({
     fontSize: 43,
     fontWeight: 'bold',
   },
-  input: {
-    width: '80%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-    fontSize: 16,
-    paddingLeft: 20,
-    backgroundColor: 'transparent',
-    fontWeight: 'bold',
-  },
-  passwordContainer: {
-    width: '80%',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  passwordInput: {
-    flex: 1,
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    padding: 10,
-    fontSize: 16,
-    paddingLeft: 20,
-    backgroundColor: 'transparent',
-    fontWeight: 'bold',
-  },
-  eyeIconContainer: {
-    position: 'absolute',
-    right: 10,
-  },
-  eyeIcon: {
-    width: 24,
-    height: 24,
-  },
   button: {
+    width: '60%',
     backgroundColor: 'red',
     borderRadius: 4,
+    marginBottom: 130,
     padding: 10,
+    marginTop: 495,
+    left: 7,
     alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
   },
+  logoAptiv: {
+    width: 200, // Largura desejada
+    height: 50, // Altura desejada
+    marginTop: 80, // Controle a posição vertical conforme necessário
+  },
 });
 
-export default App;
+export default Login;
