@@ -1,24 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ImageBackground, View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
-import authService from '../../server/authService';
+import { AzureInstance, AzureLoginView } from 'react-native-azure-ad-2';
+
+const CREDENTIALS = {
+  client_id: '0f837fad-2d75-4eda-8050-4ea9e2aec9c0',
+  client_secret: '1DX8Q~Z9JelSryf2dTmh7LEUVVrmbkQxswvjnaJH',
+  redirect_uri: 'https://projetoaptiv.b2clogin.com/oauth2/nativeclient',
+  scope: 'User.Read openid profile offline_access',
+};
+
+const azureInstance = new AzureInstance(CREDENTIALS);
 
 const Login = ({ navigation }) => {
-  const handleLogin = async () => {
-    try {
-      // Simule o processo de autenticação, pois não há campos de entrada
-      const response = await authService.login('usuariodeexemplo', 'senhadeexemplo');
+  const [loginStarted, setLoginStarted] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
-      if (response.success) {
-        // Autenticação bem-sucedida, você pode continuar com o código de navegação ou outra lógica
-        navigation.navigate('TelaPrincipal');
-      } else {
-        // Tratar erro de autenticação
-        console.error('Erro de login:', response.error);
-      }
+  const onLoginSuccess = async () => {
+    try {
+      const result = await azureInstance.getUserInfo();
+      setLoginSuccess(true);
     } catch (error) {
-      // Trate erros de rede ou outros erros inesperados
       console.error('Erro de login:', error);
     }
+  };
+
+  // Redirecione para a tela principal quando o login for bem-sucedido
+  useEffect(() => {
+    if (loginSuccess) {
+      navigation.navigate('TelaPrincipal');
+    }
+  }, [loginSuccess, navigation]);
+
+  // Função para renderizar o componente AzureLoginView em tela cheia
+  const renderAzureLoginView = () => {
+    return (
+      <View style={styles.fullScreen}>
+        <AzureLoginView
+          azureInstance={azureInstance}
+          onSuccess={onLoginSuccess}
+        />
+      </View>
+    );
   };
 
   return (
@@ -28,9 +50,16 @@ const Login = ({ navigation }) => {
           <Text style={[styles.text, { color: 'red' }]}>• Aptiv</Text>
           <Text style={[styles.text, { color: 'black' }]}>Ops •</Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
+        {!loginStarted ? (
+          <TouchableOpacity style={styles.button} onPress={() => setLoginStarted(true)}>
+            <Text style={styles.buttonText}>Entrar</Text>
+          </TouchableOpacity>
+        ) : loginSuccess ? (
+          <View style={styles.loginSuccessContainer}>
+          </View>
+        ) : (
+          renderAzureLoginView()
+        )}
         <Image source={require('../../assets/Aptiv.png')} style={styles.logoAptiv} />
       </View>
     </ImageBackground>
@@ -80,9 +109,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   logoAptiv: {
-    width: 200, // Largura desejada
-    height: 50, // Altura desejada
-    marginTop: 80, // Controle a posição vertical conforme necessário
+    width: 200,
+    height: 50,
+    marginTop: 80,
+  },
+  loginSuccessContainer: {
+    flex: 1,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fullScreen: {
+    flex: 1,
+    backgroundColor: 'white', // Defina a cor de fundo desejada
   },
 });
 
