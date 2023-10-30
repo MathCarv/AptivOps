@@ -37,8 +37,9 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap', 
-        justifyContent: 'center', 
-        width: '90%', 
+        width: '100%', 
+        left: 20,
+        alignItems: 'flex-start',
         marginTop: 20,
     },
     icon: {
@@ -216,15 +217,17 @@ const TelaPrincipal = () => {
                 />
             </View>
             <ScrollView contentContainerStyle={styles.iconContainer}>
-                {filteredIcons.map((icon, index) => (
-                    <Icon
-                        key={index}
-                        label={icon.label}
-                        backgroundColor={icon.backgroundColor}
-                        action={() => handleAction(icon.label)}
-                        imageName={icon.imageName}  // Adicione esta linha
-                    />
-                ))}
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%'  }}>
+                    {filteredIcons.map((icon, index) => (
+                        <Icon
+                            key={index}
+                            label={icon.label}
+                            backgroundColor={icon.backgroundColor}
+                            action={() => handleAction(icon.label)}
+                            imageName={icon.imageName}  
+                        />
+                    ))}
+                </View>
             </ScrollView>
             <View style={styles.footer}>
                 <View style={styles.button}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ImageBackground, View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { AzureInstance, AzureLoginView } from 'react-native-azure-ad-2';
 
 const CREDENTIALS = {
@@ -14,6 +15,16 @@ const azureInstance = new AzureInstance(CREDENTIALS);
 const Login = ({ navigation }) => {
   const [loginStarted, setLoginStarted] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reseta o estado quando a tela recebe foco
+      return () => {
+        setLoginStarted(false);
+        setLoginSuccess(false);
+      };
+    }, [])
+  );
 
   const onLoginSuccess = async () => {
     try {
@@ -34,10 +45,11 @@ const Login = ({ navigation }) => {
   // Função para renderizar o componente AzureLoginView em tela cheia
   const renderAzureLoginView = () => {
     return (
-      <View style={styles.fullScreen}>
+      <View style={styles.fullScreenAzure}>
         <AzureLoginView
           azureInstance={azureInstance}
           onSuccess={onLoginSuccess}
+          style={{flex: 1}} // Garante tela cheia
         />
       </View>
     );
@@ -60,13 +72,16 @@ const Login = ({ navigation }) => {
         ) : (
           renderAzureLoginView()
         )}
-        <Image source={require('../../assets/Aptiv.png')} style={styles.logoAptiv} />
       </View>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  fullScreenAzure: {
+    ...StyleSheet.absoluteFillObject, // Isso faz com que a view preencha toda a tela
+    backgroundColor: 'white', // Garantindo que o fundo seja opaco
+  },
   background: {
     flex: 1,
     position: 'absolute',
@@ -98,7 +113,7 @@ const styles = StyleSheet.create({
     width: '60%',
     backgroundColor: 'red',
     borderRadius: 4,
-    marginBottom: 130,
+    marginBottom: 230,
     padding: 10,
     marginTop: 495,
     left: 7,
@@ -109,6 +124,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   logoAptiv: {
+    position: 'absolute',
+    bottom: 0, 
     width: 200,
     height: 50,
     marginTop: 80,
