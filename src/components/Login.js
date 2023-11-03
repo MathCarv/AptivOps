@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { ImageBackground, View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { AzureInstance, AzureLoginView } from 'react-native-azure-ad-2';
+import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '@env';
+import RCTNetworking from "react-native/Libraries/Network/RCTNetworking";
+import { Picker } from '@react-native-picker/picker';
 
 const CREDENTIALS = {
-  client_id: '0f837fad-2d75-4eda-8050-4ea9e2aec9c0',
-  client_secret: '1DX8Q~Z9JelSryf2dTmh7LEUVVrmbkQxswvjnaJH',
-  redirect_uri: 'https://projetoaptiv.b2clogin.com/oauth2/nativeclient',
+  client_id: CLIENT_ID,
+  client_secret: CLIENT_SECRET,
+  redirect_uri: REDIRECT_URI,
   scope: 'User.Read openid profile offline_access',
 };
 
@@ -15,6 +18,8 @@ const azureInstance = new AzureInstance(CREDENTIALS);
 const Login = ({ navigation }) => {
   const [loginStarted, setLoginStarted] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [azureLoginObject, setAzureLoginObject] = useState({});
+  const [selectedCity, setSelectedCity] = useState('Conceição dos Ouros');
 
   useFocusEffect(
     React.useCallback(() => {
@@ -30,6 +35,7 @@ const Login = ({ navigation }) => {
     try {
       const result = await azureInstance.getUserInfo();
       setLoginSuccess(true);
+      setAzureLoginObject(result);
     } catch (error) {
       console.error('Erro de login:', error);
     }
@@ -38,6 +44,7 @@ const Login = ({ navigation }) => {
   // Redirecione para a tela principal quando o login for bem-sucedido
   useEffect(() => {
     if (loginSuccess) {
+      RCTNetworking.clearCookies(() => {});
       navigation.navigate('TelaPrincipal');
     }
   }, [loginSuccess, navigation]);
@@ -63,9 +70,22 @@ const Login = ({ navigation }) => {
           <Text style={[styles.text, { color: 'black' }]}>Ops •</Text>
         </View>
         {!loginStarted ? (
-          <TouchableOpacity style={styles.button} onPress={() => setLoginStarted(true)}>
-            <Text style={styles.buttonText}>Entrar</Text>
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity style={styles.button} onPress={() => setLoginStarted(true)}>
+              <Text style={styles.buttonText}>Entrar</Text>
+            </TouchableOpacity>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={selectedCity}
+                onValueChange={(itemValue, itemIndex) => setSelectedCity(itemValue)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Conceição dos Ouros" value="Conceição dos Ouros" />
+                <Picker.Item label="ES. Santo do Pinhal" value="ES. Santo do Pinhal" />
+                <Picker.Item label="Paraisópolis" value="Paraisópolis" />
+              </Picker>
+            </View>
+          </>
         ) : loginSuccess ? (
           <View style={styles.loginSuccessContainer}>
           </View>
@@ -112,8 +132,8 @@ const styles = StyleSheet.create({
   button: {
     width: '60%',
     backgroundColor: 'red',
-    borderRadius: 4,
-    marginBottom: 230,
+    borderRadius: 15,
+    marginBottom: 2,
     padding: 10,
     marginTop: 495,
     left: 7,
@@ -122,6 +142,21 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  pickerContainer: {
+    marginBottom: 260,
+    backgroundColor: 'red',
+    marginLeft: 13,
+    width: '60%',
+    borderRadius: 15,
+    marginTop: 10, 
+    borderColor: 'red',
+  },
+  picker: {
+    height: 50,
+    color: 'white',
+    alignItems: 'center',
+    width: '100%',
   },
   logoAptiv: {
     position: 'absolute',

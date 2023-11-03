@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, Button, ImageBackground, StyleSheet, TextInput, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
