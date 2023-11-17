@@ -66,12 +66,12 @@ const Login = ({ navigation }) => {
     <ImageBackground source={require('../../assets/loginbackground.jpg')} style={styles.background}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={[styles.text, { color: 'red' }]}>• Aptiv</Text>
+          <Text style={[styles.text, { color: 'red' }]} testID="logo">• Aptiv</Text>
           <Text style={[styles.text, { color: 'black' }]}>Ops •</Text>
         </View>
         {!loginStarted ? (
           <>
-            <TouchableOpacity style={styles.button} onPress={() => setLoginStarted(true)}>
+            <TouchableOpacity style={styles.button} onPress={() => setLoginStarted(true)} testID="loginButton">
               <Text style={styles.buttonText}>Entrar</Text>
             </TouchableOpacity>
             <View style={styles.pickerContainer}>
@@ -79,6 +79,7 @@ const Login = ({ navigation }) => {
                 selectedValue={selectedCity}
                 onValueChange={(itemValue, itemIndex) => setSelectedCity(itemValue)}
                 style={styles.picker}
+                testID="passwordInput"
               >
                 <Picker.Item label="Conceição dos Ouros" value="Conceição dos Ouros" />
                 <Picker.Item label="ES. Santo do Pinhal" value="ES. Santo do Pinhal" />

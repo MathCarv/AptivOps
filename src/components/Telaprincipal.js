@@ -204,61 +204,60 @@ const TelaPrincipal = () => {
 
     return (
         <ImageBackground source={require("../../assets/principalbackground.jpg")} style={styles.container}>
-            <View style={styles.header}>
-                <Text style={[styles.text, { color: 'red' }]}>• Aptiv</Text>
-                <Text style={[styles.text, { color: 'black' }]}>Ops •</Text>
-            </View>
-            <View style={styles.searchBar}>
-                <Text style={styles.searchIcon}>🔍</Text>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Buscar"
-                    value={searchText}
-                    onChangeText={text => setSearchText(text)}
+          <View style={styles.header}>
+            <Text style={[styles.text, { color: 'red' }]}>• Aptiv</Text>
+            <Text style={[styles.text, { color: 'black' }]}>Ops •</Text>
+          </View>
+          <View style={styles.searchBar} testID="searchBar">
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar"
+              value={searchText}
+              onChangeText={(text) => setSearchText(text)}
+            />
+          </View>
+          <ScrollView contentContainerStyle={styles.iconContainer}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%'  }}>
+              {filteredIcons.map((icon, index) => (
+                <Icon
+                  key={index}
+                  label={icon.label}
+                  backgroundColor={icon.backgroundColor}
+                  action={() => handleAction(icon.label)}
+                  imageName={icon.imageName}
                 />
+              ))}
             </View>
-            <ScrollView contentContainerStyle={styles.iconContainer}>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%'  }}>
-                    {filteredIcons.map((icon, index) => (
-                        <Icon
-                            key={index}
-                            label={icon.label}
-                            backgroundColor={icon.backgroundColor}
-                            action={() => handleAction(icon.label)}
-                            imageName={icon.imageName}  
-                        />
-                    ))}
+          </ScrollView>
+          <View style={styles.footer}>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={() => navigation.navigate("TelaPrincipal")} testID="principalIcon">
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Image source={require("../../assets/principal-icon.png")} style={{ width: 30, height: 30, marginLeft: 35, borderColor: 'blue', borderWidth: 1, borderRadius: 15}} />
                 </View>
-            </ScrollView>
-            <View style={styles.footer}>
-                <View style={styles.button}>
-                    <TouchableOpacity onPress={() => navigation.navigate("TelaPrincipal")}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Image source={require("../../assets/principal-icon.png")} style={{ width: 30, height: 30, marginLeft: 35, borderColor: 'blue', borderWidth: 1, borderRadius: 15}} />
-                        </View>
-                        <Text style={styles.buttonTextBlue}>Principal</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.button}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Indicadores")}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Image source={require("../../assets/indicadores-icon.png")} style={{ width: 30, height: 30, marginLeft: 35 }} />
-                        </View>
-                        <Text style={styles.buttonText}>Indicadores</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.button}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Configurações")}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Image source={require("../../assets/configuracoes-icon.png")} style={{ width: 30, height: 30, marginLeft: 35 }} />
-                        </View>
-                        <Text style={styles.buttonText}>Configurações</Text>
-                    </TouchableOpacity>
-                </View>
+                <Text style={styles.buttonTextBlue}>Principal</Text>
+              </TouchableOpacity>
             </View>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={() => navigation.navigate("Indicadores")} testID="indicadoresIcon">
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Image source={require("../../assets/indicadores-icon.png")} style={{ width: 30, height: 30, marginLeft: 35 }} />
+                </View>
+                <Text style={styles.buttonText}>Indicadores</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={() => navigation.navigate("Configurações")} testID="configuracoesIcon">
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Image source={require("../../assets/configuracoes-icon.png")} style={{ width: 30, height: 30, marginLeft: 35 }} />
+                </View>
+                <Text style={styles.buttonText}>Configurações</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </ImageBackground>
-    );
-};
+      );
+    };
 
 export default TelaPrincipal;
