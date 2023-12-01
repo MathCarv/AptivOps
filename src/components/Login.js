@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ImageBackground, View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import { ImageBackground, View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform, TextInput, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { AzureInstance, AzureLoginView } from 'react-native-azure-ad-2';
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '@env';
 import RCTNetworking from "react-native/Libraries/Network/RCTNetworking";
 import { Picker } from '@react-native-picker/picker';
+import TelaPrincipal from './TelaPrincipal'; // Importe a tela principal
 
 const CREDENTIALS = {
   client_id: CLIENT_ID,
@@ -20,6 +21,7 @@ const Login = ({ navigation }) => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [azureLoginObject, setAzureLoginObject] = useState({});
   const [selectedCity, setSelectedCity] = useState('Conceição dos Ouros');
+  const [modalVisible, setModalVisible] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -36,6 +38,9 @@ const Login = ({ navigation }) => {
       const result = await azureInstance.getUserInfo();
       setLoginSuccess(true);
       setAzureLoginObject(result);
+
+      // Navegue para a tela principal com a cidade selecionada
+      navigation.navigate('TelaPrincipal', { selectedCity });
     } catch (error) {
       console.error('Erro de login:', error);
     }
@@ -45,9 +50,9 @@ const Login = ({ navigation }) => {
   useEffect(() => {
     if (loginSuccess) {
       RCTNetworking.clearCookies(() => {});
-      navigation.navigate('TelaPrincipal');
+      navigation.navigate('TelaPrincipal', { selectedCity });
     }
-  }, [loginSuccess, navigation]);
+  }, [loginSuccess, navigation, selectedCity]);
 
   // Função para renderizar o componente AzureLoginView em tela cheia
   const renderAzureLoginView = () => {
@@ -75,16 +80,42 @@ const Login = ({ navigation }) => {
               <Text style={styles.buttonText}>Entrar</Text>
             </TouchableOpacity>
             <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={selectedCity}
-                onValueChange={(itemValue, itemIndex) => setSelectedCity(itemValue)}
-                style={styles.picker}
-                testID="passwordInput"
-              >
-                <Picker.Item label="Conceição dos Ouros" value="Conceição dos Ouros" />
-                <Picker.Item label="ES. Santo do Pinhal" value="ES. Santo do Pinhal" />
-                <Picker.Item label="Paraisópolis" value="Paraisópolis" />
-              </Picker>
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <Text style={styles.selectedCity}>{selectedCity}</Text>
+              </TouchableOpacity>
+              {Platform.OS === 'ios' && (
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                >
+                  <View style={styles.modalContainerIOS}>
+                    <TouchableWithoutFeedback
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <View style={styles.buttonContainer}>
+                        <Text
+                          style={{ color: 'blue' }}
+                          onPress={() => setModalVisible(false)}
+                        >
+                          
+                        </Text>
+                      </View>
+                    </TouchableWithoutFeedback>
+                    <Picker
+                      selectedValue={selectedCity}
+                      onValueChange={(itemValue, itemIndex) => {
+                        setSelectedCity(itemValue);
+                        setModalVisible(false);
+                      }}
+                    >
+                      <Picker.Item label="Conceição dos Ouros" value="Conceição dos Ouros" />
+                      <Picker.Item label="ES. Santo do Pinhal" value="ES. Santo do Pinhal" />
+                      <Picker.Item label="Paraisópolis" value="Paraisópolis" />
+                    </Picker>
+                  </View>
+                </Modal>
+              )}
             </View>
           </>
         ) : loginSuccess ? (
@@ -150,11 +181,34 @@ const styles = StyleSheet.create({
     marginLeft: 13,
     width: '60%',
     borderRadius: 15,
-    marginTop: 10, 
+    marginTop: 10,
     borderColor: 'red',
+  },
+  selectedCity: {
+    height: 50,
+    color: 'white',
+    fontSize: 16,
+    textAlignVertical: 'center',
+    textAlign:'center',
+    paddingLeft: 5,
+    paddingVertical: 14 ,
+  },
+  modalContainerIOS: {
+    position: 'absolute',
+    top: '72%', // Ou qualquer valor que funcione para o seu layout
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+  },
+  buttonContainer: {
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    padding: 4,
+    backgroundColor: '#fff',
   },
   picker: {
     height: 50,
+    width: 50,
     color: 'white',
     alignItems: 'center',
     width: '100%',

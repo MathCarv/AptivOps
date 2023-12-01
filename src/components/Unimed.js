@@ -18,15 +18,15 @@ const styles = StyleSheet.create({
     },
 });
 
-const Unimed = () => {
+const Chevrolet = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Benefícios</Text>
+            <Text style={styles.title}>Chevrolet</Text>
             <Text style={styles.content}>
-                Aqui você encontrará informações sobre os benefícios oferecidos pela empresa, incluindo saúde, bem-estar, férias e muito mais.
+                Aqui você encontrará informações sobre os beneficios da Chevrolet
             </Text>
         </View>
     );
 };
 
-export default Unimed;
+export default Chevrolet;
